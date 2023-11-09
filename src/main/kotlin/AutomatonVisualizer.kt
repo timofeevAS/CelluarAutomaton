@@ -35,8 +35,12 @@ class AutomatVisualizer(private val automat: Automat, steps: Int, delay: Long) {
         gui.displayChart()
         var generation = 0
 
-        val trueHeight = (800*(automat.height/30.0)).toInt()
-        val trueWidth = (750*(automat.width)/30.0).toInt()
+        val trueHeight = (800.0*((automat.height/30.0))).toInt()
+        val trueWidth = (800.0*((automat.width)/30.0)).toInt()
+
+        //println("$trueHeight x $trueWidth")
+        //println("${automat.height} x ${automat.width}")
+
         chart.getStyler().setMarkerSize(
             (20*
                     (sqrt(900.0/(automat.width*automat.height).toDouble()))).toInt()
