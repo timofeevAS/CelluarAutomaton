@@ -1,12 +1,58 @@
 package automat
 
-import kotlin.random.Random
+import java.io.File
 
-class Automat(private var rule:Long,var width: Int,var height: Int) {
-    private var universes = arrayOf(Universe(width,height,true), Universe(width,height,true)) // two universes
+
+class Automat(private var rule:Long,var width: Int,var height: Int, randomize:Boolean = false, filename:String = "") {
+    private var universes = arrayOf(Universe(width,height,randomize), Universe(width,height,randomize)) // two universes
     private var generations: Int = 0
 
+    init {
+        if ((randomize and filename.toBoolean())) {
+            throw IllegalArgumentException("Randomize flag and filename can't use together!")
+        }
 
+        if (filename.isNotEmpty()){
+            val file = File("src/main/resources/$filename")
+
+            val lines = file.readLines()
+
+            if (lines.isNotEmpty()) {
+                val dimensions = lines.first().split(" ").map { it.toInt() }
+                val rows = dimensions[0]
+                val cols = dimensions[1]
+
+                this.height = rows
+                this.width = cols
+
+                val grid = lines.subList(1, lines.size).map { it.toCharArray() }
+
+                println("Reading from $filename with size:\n Rows: $rows, Columns: $cols")
+
+                var newUniverseArray: Array<Array<Boolean>> = emptyArray();
+
+                for (row in grid) {
+                    println(row)
+                    val charList = row.filter { !it.isWhitespace() }
+                    val boolRow = charList.map { it == 'x' }.toTypedArray()
+
+                    newUniverseArray = newUniverseArray.plusElement(boolRow)
+                }
+                newUniverseArray.reverse()
+
+
+                // Fill universe from file
+                universes[0] = Universe(newUniverseArray)
+                universes[1] = Universe(newUniverseArray)
+
+            }
+            else {
+                println("File is empty.")
+            }
+
+
+        }
+    }
     fun printAutomatState() {
         val universe = universes.first() // Take first universe and show it
         val width = universe.getWidth()

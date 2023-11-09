@@ -5,11 +5,13 @@ import org.knowm.xchart.style.markers.SeriesMarkers
 import java.awt.Color
 import java.awt.Dimension
 import javax.swing.SwingUtilities
+import kotlin.math.sqrt
 
 class AutomatVisualizer(private val automat: Automat, steps: Int, delay: Long) {
     private val chart = XYChartBuilder().theme(Styler.ChartTheme.GGPlot2).build().also {
         with(it.styler) {
             chartBackgroundColor = Color.GRAY
+            isLegendVisible = false
             legendBackgroundColor = Color.GRAY
             chartFontColor = Color.BLACK
             isPlotGridLinesVisible = false
@@ -31,15 +33,18 @@ class AutomatVisualizer(private val automat: Automat, steps: Int, delay: Long) {
         val gui = SwingWrapper(chart)
 
         gui.displayChart()
-
-        chart.getStyler().setMarkerSize(20)
         var generation = 0
+
         val trueHeight = (800*(automat.height/30.0)).toInt()
         val trueWidth = (750*(automat.width)/30.0).toInt()
+        chart.getStyler().setMarkerSize(
+            (20*
+                    (sqrt(900.0/(automat.width*automat.height).toDouble()))).toInt()
+        )
 
 
         while (true) {
-            gui.xChartPanel.topLevelAncestor.setSize(trueHeight,trueWidth)
+            gui.xChartPanel.topLevelAncestor.setSize(800,800)
 
             if (steps != -1 && generation == steps) break
             automat.applyRule()

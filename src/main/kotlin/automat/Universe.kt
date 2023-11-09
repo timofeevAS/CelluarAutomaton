@@ -15,6 +15,16 @@ class Universe(private val width: Int, private val height: Int, randomize:Boolea
         }
     }
 
+    constructor(gridArray: Array<Array<Boolean>>) : this(gridArray.size, gridArray.firstOrNull()?.size ?: 0) {
+        gridArray.indices.forEach { i ->
+            gridArray[i].indices.forEach { j ->
+                grid[i][j] = Cell(gridArray[i][j])
+            }
+        }
+
+    }
+
+
     private fun convert(i: Int, j: Int): Pair<Int,Int>{
         var mi = i % width
         if (mi < 0){
